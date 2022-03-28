@@ -2,13 +2,13 @@ package game;
 
 import java.awt.Rectangle;
 
-public class ExplosionRadius {
-	
+public class ExplosionHandler {
+
 	GamePanel gp;
 	Rectangle er;
 	int RectDefaultX, RectDefaultY;
-	
-	public ExplosionRadius(GamePanel gp) {
+
+	public ExplosionHandler(GamePanel gp) {
 		this.gp = gp;
 		er = new Rectangle();
 		er.x = 0;
@@ -18,13 +18,13 @@ public class ExplosionRadius {
 		RectDefaultX = er.x;
 		RectDefaultY = er.y;
 	}
-	
+
 	public void checkEvent(int eventCol, int eventRow) {
 		if( hit(eventCol,eventRow) == true) {
 			gp.player.life--;
 		}	
 	}
-	
+
 	public boolean hit(int eventCol, int eventRow) {
 		boolean hit = false;
 		gp.player.area.x = gp.player.x + gp.player.area.x;
@@ -40,5 +40,5 @@ public class ExplosionRadius {
 		er.y = RectDefaultY;
 		return hit;
 	}
-	
+
 }

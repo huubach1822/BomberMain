@@ -37,7 +37,7 @@ public class Player extends Entity{
 		life = 3;
 		areaDefaultX = area.x;
 		areaDefaultY = area.y;
-		bombRadius = 8;
+		bombRadius = 3;
 	}
 
 	public void getPlayerImage() {
@@ -65,8 +65,10 @@ public class Player extends Entity{
 			else if(keyH.rightPressed==true) {
 				direction = "right";
 			}
+
 			collisionOn = false;
 			gp.cChecker.checkTile(this);
+
 			if(collisionOn == false) {
 				switch(direction) {
 				case "up":
@@ -104,4 +106,5 @@ public class Player extends Entity{
 		}
 		g2.drawImage(image, x, y, size, size, null);
 	}
+
 }
