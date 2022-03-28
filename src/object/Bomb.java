@@ -15,8 +15,8 @@ public class Bomb {
 	GamePanel gp;
 	int colIndex, rowIndex;
 	BufferedImage boom, explosion;	
-	int timeToExplosion,exploding;
-	boolean plantBomb = false, explode = false;
+	int timeToExplosion, explosionCounter;
+	boolean plantBomb = false, bombExplode = false;
 	public int limitUp = 10, limitDown = 10, limitLeft = 10, limitRight = 10;
 
 	public Bomb(GamePanel gp) {
@@ -31,7 +31,7 @@ public class Bomb {
 	}
 
 	public void update() {
-		if(gp.keyH.spacePressed == true && plantBomb == false && explode == false) {
+		if(gp.keyH.spacePressed == true && plantBomb == false && bombExplode == false) {
 			colIndex = (gp.player.x + gp.player.size/2)/gp.tileSize;
 			rowIndex = (gp.player.y + gp.player.size/2)/gp.tileSize;
 			plantBomb = true;
@@ -42,10 +42,10 @@ public class Bomb {
 		if(timeToExplosion>80) {
 			plantBomb = false;
 			timeToExplosion = 0;
-			explode = true;
+			bombExplode = true;
 		}
-		if(explode == true) {
-			exploding++;
+		if(bombExplode == true) {
+			explosionCounter++;
 			gp.er.checkEvent(colIndex, rowIndex);
 			for(int i = 1; i <= gp.player.bombRadius; i++) {
 				bombRadiusLimit(i);
@@ -55,9 +55,9 @@ public class Bomb {
 				if(i < limitUp) gp.er.checkEvent(colIndex, rowIndex-i);
 			}
 		}
-		if(exploding>50) {
-			explode = false;
-			exploding = 0;
+		if(explosionCounter>50) {
+			bombExplode = false;
+			explosionCounter = 0;
 			limitUp = 10;
 			limitDown = 10; 
 			limitLeft = 10; 
@@ -69,7 +69,7 @@ public class Bomb {
 		if(plantBomb == true) {
 			g2.drawImage(boom, colIndex*gp.tileSize+6, rowIndex*gp.tileSize+6, gp.tileSize*3/4, gp.tileSize*3/4, null);
 		}
-		if(explode == true) {
+		if(bombExplode == true) {
 			g2.drawImage(explosion, colIndex*gp.tileSize, rowIndex*gp.tileSize, gp.tileSize, gp.tileSize, null);
 			for(int i = 1; i <= gp.player.bombRadius; i++) {
 				if(i < limitRight) drawExplosion(g2,colIndex+i,rowIndex);

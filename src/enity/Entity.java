@@ -14,5 +14,7 @@ public class Entity {
 	public boolean collisionOn = false;
 	public int areaDefaultX, areaDefaultY;
 	public int life;
+	public boolean invincible = false;
+	public int invincibleCounter;
 	
 }

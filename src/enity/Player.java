@@ -1,5 +1,7 @@
 package enity;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -86,6 +88,14 @@ public class Player extends Entity{
 				}
 			}
 		}
+		
+		if(invincible == true) {
+			invincibleCounter++;
+			if(invincibleCounter > 80) {
+				invincible = false;
+				invincibleCounter = 0;
+			}
+		}
 	}
 
 	public void draw(Graphics2D g2) {
@@ -105,6 +115,12 @@ public class Player extends Entity{
 			break;
 		}
 		g2.drawImage(image, x, y, size, size, null);
+		
+		// DEBUG
+//		g2.setFont(new Font("Arial", Font.PLAIN, 26));
+//		g2.setColor(Color.white);
+//		g2.drawString("Invincible:"+invincibleCounter, 10, 400);
+		
 	}
 
 }

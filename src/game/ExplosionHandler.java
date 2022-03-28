@@ -21,7 +21,11 @@ public class ExplosionHandler {
 
 	public void checkEvent(int eventCol, int eventRow) {
 		if( hit(eventCol,eventRow) == true) {
-			gp.player.life--;
+			if(gp.player.invincible == false) {
+				gp.player.life--;
+				gp.player.invincible = true;
+			}
+			
 		}	
 	}
 
