@@ -1,4 +1,4 @@
-package enity;
+package game;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -6,18 +6,20 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
-
-import game.GamePanel;
-import game.KeyHandler;
 
 public class Player extends Entity{
 
 	GamePanel gp;
 	KeyHandler keyH;
-	public int bombRadius;
-
+	public int bombRadius, maxBomb;
+	LinkedList<Bomb> bomb = new LinkedList<Bomb>();
+	int delay = 0;
+	boolean finish = true;
+	
 	public Player(GamePanel gp, KeyHandler keyH) {
 		this.gp = gp;
 		this.keyH = keyH;	
@@ -39,7 +41,8 @@ public class Player extends Entity{
 		life = 3;
 		areaDefaultX = area.x;
 		areaDefaultY = area.y;
-		bombRadius = 3;
+		bombRadius = 10;
+		maxBomb = 2;
 	}
 
 	public void getPlayerImage() {
@@ -89,6 +92,8 @@ public class Player extends Entity{
 			}
 		}
 		
+		PlantBomb();
+		
 		if(invincible == true) {
 			invincibleCounter++;
 			if(invincibleCounter > 80) {
@@ -99,6 +104,11 @@ public class Player extends Entity{
 	}
 
 	public void draw(Graphics2D g2) {
+		
+		for(Bomb x : bomb) {
+			x.draw(g2);
+		}
+		
 		BufferedImage image = null;
 		switch(direction) {
 		case "up":
@@ -115,12 +125,36 @@ public class Player extends Entity{
 			break;
 		}
 		g2.drawImage(image, x, y, size, size, null);
-		
-		// DEBUG
-//		g2.setFont(new Font("Arial", Font.PLAIN, 26));
-//		g2.setColor(Color.white);
-//		g2.drawString("Invincible:"+invincibleCounter, 10, 400);
-		
 	}
+	
+	public void PlantBomb() {
 
+		if(keyH.spacePressed == true && finish == true) {
+			if(bomb.size()<=maxBomb) {
+				bomb.add(new Bomb(gp));
+				finish = false;
+			}
+		}
+
+		if(finish==false) {
+			delay++;
+		}
+
+		if(delay>=10) {
+			finish = true;
+			delay = 0;
+		}
+
+		for(Bomb x : bomb) {
+			x.update();
+		}
+
+		Iterator<Bomb> iterator = bomb.iterator();
+		while (iterator.hasNext()) {
+			Bomb b = iterator.next();
+			if (b.end == true) {
+				iterator.remove();
+			}
+		}
+	}
 }

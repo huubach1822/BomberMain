@@ -25,7 +25,6 @@ public class ExplosionHandler {
 				gp.player.life--;
 				gp.player.invincible = true;
 			}
-			
 		}	
 	}
 

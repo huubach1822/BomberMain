@@ -1,7 +1,5 @@
 package game;
 
-import enity.Entity;
-
 public class CollisionChecker {
 
 	GamePanel gp;
