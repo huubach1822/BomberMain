@@ -41,7 +41,7 @@ public class Player extends Entity{
 		life = 3;
 		areaDefaultX = area.x;
 		areaDefaultY = area.y;
-		bombRadius = 10;
+		bombRadius = 2;
 		maxBomb = 2;
 	}
 
