@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Queue;
 
 import javax.imageio.ImageIO;
 
@@ -16,10 +17,10 @@ public class Player extends Entity{
 	GamePanel gp;
 	KeyHandler keyH;
 	public int bombRadius, maxBomb;
-	LinkedList<Bomb> bomb = new LinkedList<Bomb>();
-	int delay = 0;
-	boolean finish = true;
-	
+	Queue<Bomb> bomb = new LinkedList<Bomb>();
+	boolean delay = false;
+	int delayCounter = 0;
+
 	public Player(GamePanel gp, KeyHandler keyH) {
 		this.gp = gp;
 		this.keyH = keyH;	
@@ -91,9 +92,9 @@ public class Player extends Entity{
 				}
 			}
 		}
-		
+
 		PlantBomb();
-		
+
 		if(invincible == true) {
 			invincibleCounter++;
 			if(invincibleCounter > 80) {
@@ -104,11 +105,11 @@ public class Player extends Entity{
 	}
 
 	public void draw(Graphics2D g2) {
-		
+
 		for(Bomb x : bomb) {
 			x.draw(g2);
 		}
-		
+
 		BufferedImage image = null;
 		switch(direction) {
 		case "up":
@@ -126,34 +127,31 @@ public class Player extends Entity{
 		}
 		g2.drawImage(image, x, y, size, size, null);
 	}
-	
+
 	public void PlantBomb() {
 
-		if(keyH.spacePressed == true && finish == true) {
+		if(keyH.spacePressed == true && delay == false) {
 			if(bomb.size()<=maxBomb) {
 				bomb.add(new Bomb(gp));
-				finish = false;
+				delay = true;
 			}
 		}
 
-		if(finish==false) {
-			delay++;
-		}
-
-		if(delay>=10) {
-			finish = true;
-			delay = 0;
+		if(delay== true) {
+			delayCounter++;
+			if(delayCounter >= 10) {
+				delay = false;
+				delayCounter = 0;
+			}
 		}
 
 		for(Bomb x : bomb) {
 			x.update();
 		}
 
-		Iterator<Bomb> iterator = bomb.iterator();
-		while (iterator.hasNext()) {
-			Bomb b = iterator.next();
-			if (b.end == true) {
-				iterator.remove();
+		if(bomb.size()>0) {
+			if(bomb.peek().end==true) {
+				bomb.poll();
 			}
 		}
 	}

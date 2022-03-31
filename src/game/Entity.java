@@ -10,9 +10,9 @@ public class Entity {
 	public int size;	
 	public BufferedImage up, down ,left, right;
 	public String direction;
-	public Rectangle area; 
-	public boolean collisionOn = false;
+	public Rectangle area;
 	public int areaDefaultX, areaDefaultY;
+	public boolean collisionOn = false;
 	public int life;
 	public boolean invincible = false;
 	public int invincibleCounter;
