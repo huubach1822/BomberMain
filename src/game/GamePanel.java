@@ -10,8 +10,8 @@ import javax.swing.JPanel;
 public class GamePanel extends JPanel implements Runnable {
 
 	public final int tileSize = 48;
-	public final int maxScreenCol = 16;
-	public final int maxScreenRow = 12;
+	public final int maxScreenCol = 17;
+	public final int maxScreenRow = 15;
 	public final int screenWidth = tileSize * maxScreenCol;	//768
 	public final int screenHeight = tileSize * maxScreenRow;	//576
 
@@ -22,13 +22,18 @@ public class GamePanel extends JPanel implements Runnable {
 	public CollisionChecker cChecker = new CollisionChecker(this);
 	public Heart heart = new Heart(this);
 	public ExplosionHandler eh = new ExplosionHandler(this);
+	public Enemy enemy[] = new Enemy[10];
+	
 
 	public GamePanel() {	
 		this.setPreferredSize(new Dimension(screenWidth,screenHeight));
 		this.setBackground(Color.black);
 		this.addKeyListener(keyH);
 		this.setFocusable(true);
-
+			enemy[0] = new Enemy(this, 250, 300);
+			enemy[1] = new Enemy(this, 400, 500);
+			enemy[2] = new Enemy(this, 600, 450);
+			enemy[3] = new Enemy(this, 700, 600);		
 	}
 
 	public void startGameThread() {
@@ -52,7 +57,7 @@ public class GamePanel extends JPanel implements Runnable {
 	}
 
 	public void update() {
-		player.update();
+		player.update();		
 	}
 
 	public void paintComponent(Graphics g) {
@@ -61,6 +66,13 @@ public class GamePanel extends JPanel implements Runnable {
 		tileM.draw(g2);
 		player.draw(g2);
 		heart.draw(g2);
+		for(int i=0;i<10;i++)
+		{
+			if(enemy[i]!=null)
+			{
+				enemy[i].draw(g2);
+			}
+		}
 		g2.dispose();
 	}
 

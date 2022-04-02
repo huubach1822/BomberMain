@@ -16,5 +16,5 @@ public class Entity {
 	public int life;
 	public boolean invincible = false;
 	public int invincibleCounter;
-	
+
 }

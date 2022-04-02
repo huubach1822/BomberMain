@@ -34,8 +34,8 @@ public class Player extends Entity{
 	}
 
 	public void setDefaultValues() {
-		x = 100;
-		y = 100;
+		x = 150;
+		y = 150;
 		speed = 4;
 		direction = "down";
 		size = gp.tileSize;
@@ -52,7 +52,8 @@ public class Player extends Entity{
 			down = ImageIO.read(getClass().getResourceAsStream("/player/player_down_1.png"));
 			left = ImageIO.read(getClass().getResourceAsStream("/player/player_left_1.png"));
 			right = ImageIO.read(getClass().getResourceAsStream("/player/player_right_1.png"));
-		} catch(IOException e) {
+		} 
+		catch(IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -115,7 +116,7 @@ public class Player extends Entity{
 		case "up":
 			image = up;
 			break;
-		case "down":
+		case "down": 
 			image = down;
 			break;
 		case "left":
