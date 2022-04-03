@@ -15,7 +15,7 @@ public class Bomb {
 	int timeToExplosion = 80, explosionCounter = 50;
 	public int limitUp, limitDown, limitLeft, limitRight;
 	public boolean end = false;
-	
+
 	public Bomb(GamePanel gp) {
 		this.gp = gp;
 		colIndex = (gp.player.x + gp.player.size/2)/gp.tileSize;
@@ -30,15 +30,15 @@ public class Bomb {
 	}
 
 	public void update() {
-		
+
 		if(timeToExplosion!=0) {
 			timeToExplosion --;
 		} else if(explosionCounter!=0) {
 			explosionCounter--;
 		} else {end = true;}
-		
+
 		bombRadiusLimit();
-		
+
 		if(timeToExplosion==0 && explosionCounter!=0) {
 			gp.eh.checkEvent(colIndex, rowIndex);
 			for(int i = 1; i <= gp.player.bombRadius; i++) {				
@@ -48,7 +48,6 @@ public class Bomb {
 				if(i <= limitUp) gp.eh.checkEvent(colIndex, rowIndex-i);
 			}
 		}
-		
 	}
 
 	public void draw(Graphics2D g2) {	
@@ -79,16 +78,17 @@ public class Bomb {
 		if( gp.tileM.tile[tileNum].breakable == true) {
 			g2.drawImage(explosion, col*gp.tileSize, row*gp.tileSize, gp.tileSize, gp.tileSize, null);
 			gp.tileM.mapTileNum[row][col] = 0;
+			gp.player.score+=10;
 		}
 	}
 
 	public void bombRadiusLimit() {
 		limitUp = limitDown = limitRight = limitLeft = gp.player.bombRadius;
 		for(int i = 1; i <= gp.player.bombRadius; i++) {
-		if(i <= limitRight) setLimit(colIndex+i, rowIndex, i, "right");
-		if(i <= limitDown)	setLimit(colIndex, rowIndex+i, i, "down");
-		if(i <= limitLeft)	setLimit(colIndex-i, rowIndex, i, "left");
-		if(i <= limitUp)	setLimit(colIndex, rowIndex-i, i, "up");
+			if(i <= limitRight) setLimit(colIndex+i, rowIndex, i, "right");
+			if(i <= limitDown)	setLimit(colIndex, rowIndex+i, i, "down");
+			if(i <= limitLeft)	setLimit(colIndex-i, rowIndex, i, "left");
+			if(i <= limitUp)	setLimit(colIndex, rowIndex-i, i, "up");
 		}
 	}
 

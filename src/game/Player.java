@@ -1,12 +1,10 @@
 package game;
 
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -20,22 +18,23 @@ public class Player extends Entity{
 	Queue<Bomb> bomb = new LinkedList<Bomb>();
 	boolean delay = false;
 	int delayCounter = 0;
-
+	int score = 0;
+	
 	public Player(GamePanel gp, KeyHandler keyH) {
 		this.gp = gp;
 		this.keyH = keyH;	
 		area = new Rectangle();
-		area.x = 6;
-		area.y = 16;
-		area.width = 34;
-		area.height = 28;			
+		area.x = 10;
+		area.y = 17;
+		area.width = 27;
+		area.height = 28;
 		setDefaultValues();
 		getPlayerImage();
 	}
 
 	public void setDefaultValues() {
-		x = 150;
-		y = 150;
+		x = 3*gp.tileSize;
+		y = 3*gp.tileSize;
 		speed = 4;
 		direction = "down";
 		size = gp.tileSize;
@@ -76,6 +75,9 @@ public class Player extends Entity{
 			collisionOn = false;
 			gp.cChecker.checkTile(this);
 
+			int enemyIndex = gp.cChecker.checkEntity(this, gp.enemy);
+			interactEnemy(enemyIndex);
+
 			if(collisionOn == false) {
 				switch(direction) {
 				case "up":
@@ -106,7 +108,7 @@ public class Player extends Entity{
 	}
 
 	public void draw(Graphics2D g2) {
-
+		
 		for(Bomb x : bomb) {
 			x.draw(g2);
 		}
@@ -126,7 +128,11 @@ public class Player extends Entity{
 			image = right;
 			break;
 		}
+		if(invincible == true) {
+			g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
+		}
 		g2.drawImage(image, x, y, size, size, null);
+		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 	}
 
 	public void PlantBomb() {
@@ -153,6 +159,15 @@ public class Player extends Entity{
 		if(bomb.size()>0) {
 			if(bomb.peek().end==true) {
 				bomb.poll();
+			}
+		}
+	}
+
+	public void interactEnemy(int i) {
+		if(i != 999) {
+			if(invincible == false) {
+				life--;
+				invincible = true;
 			}
 		}
 	}

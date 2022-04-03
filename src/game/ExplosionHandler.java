@@ -5,42 +5,56 @@ import java.awt.Rectangle;
 public class ExplosionHandler {
 
 	GamePanel gp;
-	Rectangle er;
+	Rectangle eh;
 	int RectDefaultX, RectDefaultY;
 
 	public ExplosionHandler(GamePanel gp) {
 		this.gp = gp;
-		er = new Rectangle();
-		er.x = 0;
-		er.y = 0;
-		er.width = gp.tileSize;
-		er.height = gp.tileSize;
-		RectDefaultX = er.x;
-		RectDefaultY = er.y;
+		eh = new Rectangle();
+		eh.x = 0;
+		eh.y = 0;
+		eh.width = gp.tileSize;
+		eh.height = gp.tileSize;
+		RectDefaultX = eh.x;
+		RectDefaultY = eh.y;
 	}
 
 	public void checkEvent(int eventCol, int eventRow) {
-		if( hit(eventCol,eventRow) == true) {
+		if( hit(eventCol,eventRow, gp.player) == true) {
 			if(gp.player.invincible == false) {
 				gp.player.life--;
 				gp.player.invincible = true;
 			}
-		}	
+		}
+		for(int i = 0; i < gp.enemy.length; i++) {
+			if(gp.enemy[i]!= null)
+			{
+				if( hit(eventCol,eventRow, gp.enemy[i]) == true) {
+					gp.enemy[i] = null;
+					gp.player.score +=50;
+				}
+			}
+		}
+		for(Bomb x : gp.player.bomb) {
+			if(eventCol == x.colIndex && eventRow == x.rowIndex) {
+				x.timeToExplosion = 0;
+			}
+		}
 	}
 
-	public boolean hit(int eventCol, int eventRow) {
+	public boolean hit(int eventCol, int eventRow,Entity target) {
 		boolean hit = false;
-		gp.player.area.x = gp.player.x + gp.player.area.x;
-		gp.player.area.y = gp.player.y + gp.player.area.y;
-		er.x = eventCol*gp.tileSize + er.x;
-		er.y = eventRow*gp.tileSize + er.y;
-		if(gp.player.area.intersects(er)) {
+		target.area.x = target.x + target.area.x;
+		target.area.y = target.y + target.area.y;
+		eh.x = eventCol*gp.tileSize + eh.x;
+		eh.y = eventRow*gp.tileSize + eh.y;
+		if(target.area.intersects(eh)) {
 			hit = true;
 		}
-		gp.player.area.x = gp.player.areaDefaultX;
-		gp.player.area.y = gp.player.areaDefaultY;
-		er.x = RectDefaultX;
-		er.y = RectDefaultY;
+		target.area.x = target.areaDefaultX;
+		target.area.y = target.areaDefaultY;
+		eh.x = RectDefaultX;
+		eh.y = RectDefaultY;
 		return hit;
 	}
 
