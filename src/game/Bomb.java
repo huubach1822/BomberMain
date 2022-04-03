@@ -78,7 +78,7 @@ public class Bomb {
 		if( gp.tileM.tile[tileNum].breakable == true) {
 			g2.drawImage(explosion, col*gp.tileSize, row*gp.tileSize, gp.tileSize, gp.tileSize, null);
 			gp.tileM.mapTileNum[row][col] = 0;
-			gp.player.score+=10;
+			gp.player.score+=5;
 		}
 	}
 

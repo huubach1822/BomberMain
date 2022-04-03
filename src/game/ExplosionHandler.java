@@ -31,7 +31,7 @@ public class ExplosionHandler {
 			{
 				if( hit(eventCol,eventRow, gp.enemy[i]) == true) {
 					gp.enemy[i] = null;
-					gp.player.score +=50;
+					gp.player.score +=25;
 				}
 			}
 		}
