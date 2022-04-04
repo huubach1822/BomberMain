@@ -35,7 +35,7 @@ public class ExplosionHandler {
 				}
 			}
 		}
-		for(Bomb x : gp.player.bomb) {
+		for(Bomb x : gp.bomb) {
 			if(eventCol == x.colIndex && eventRow == x.rowIndex) {
 				x.timeToExplosion = 0;
 			}

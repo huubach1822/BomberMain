@@ -12,14 +12,14 @@ public class Bomb {
 	GamePanel gp;
 	int colIndex, rowIndex;
 	BufferedImage boom, explosion;	
-	int timeToExplosion = 80, explosionCounter = 50;
+	int timeToExplosion = 100, explosionCounter = 50;
 	public int limitUp, limitDown, limitLeft, limitRight;
 	public boolean end = false;
 
-	public Bomb(GamePanel gp) {
+	public Bomb(GamePanel gp, int colIndex, int rowIndex) {
 		this.gp = gp;
-		colIndex = (gp.player.x + gp.player.size/2)/gp.tileSize;
-		rowIndex = (gp.player.y + gp.player.size/2)/gp.tileSize;
+		this.colIndex = colIndex;
+		this.rowIndex = rowIndex;
 		try {
 			boom = ImageIO.read(getClass().getResourceAsStream("/boom/boom_1.png"));
 			explosion = ImageIO.read(getClass().getResourceAsStream("/boom/bombbang_mid_1.png"));

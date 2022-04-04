@@ -5,8 +5,6 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.Queue;
 
 import javax.imageio.ImageIO;
 
@@ -15,7 +13,6 @@ public class Player extends Entity{
 	GamePanel gp;
 	KeyHandler keyH;
 	public int bombRadius, maxBomb;
-	Queue<Bomb> bomb = new LinkedList<Bomb>();
 	boolean delay = false;
 	int delayCounter = 0;
 	int score = 0;
@@ -108,10 +105,6 @@ public class Player extends Entity{
 	}
 
 	public void draw(Graphics2D g2) {
-		
-		for(Bomb x : bomb) {
-			x.draw(g2);
-		}
 
 		BufferedImage image = null;
 		switch(direction) {
@@ -137,9 +130,11 @@ public class Player extends Entity{
 
 	public void PlantBomb() {
 
-		if(keyH.spacePressed == true && delay == false) {
-			if(bomb.size()<=maxBomb) {
-				bomb.add(new Bomb(gp));
+		if(keyH.spacePressed == true && delay == false && gp.bomb.size()<=maxBomb) {
+			int colIndex = (gp.player.x + gp.player.size/2)/gp.tileSize;
+			int rowIndex = (gp.player.y + gp.player.size/2)/gp.tileSize;
+			if(doesBombExist(colIndex,rowIndex)) {
+				gp.bomb.add(new Bomb(gp,colIndex,rowIndex));
 				delay = true;
 			}
 		}
@@ -152,17 +147,17 @@ public class Player extends Entity{
 			}
 		}
 
-		for(Bomb x : bomb) {
-			x.update();
-		}
-
-		if(bomb.size()>0) {
-			if(bomb.peek().end==true) {
-				bomb.poll();
+	}
+	
+	public boolean doesBombExist(int col, int row) {
+		for(Bomb x : gp.bomb) {
+			if(col == x.colIndex && row == x.rowIndex) {
+				return false;
 			}
 		}
+		return true;
 	}
-
+	
 	public void interactEnemy(int i) {
 		if(i != 999) {
 			if(invincible == false) {

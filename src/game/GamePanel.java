@@ -5,6 +5,9 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.LinkedList;
+import java.util.Queue;
+
 import javax.swing.JPanel;
 
 public class GamePanel extends JPanel implements Runnable {
@@ -25,7 +28,7 @@ public class GamePanel extends JPanel implements Runnable {
 	public HeartAndScore heart = new HeartAndScore(this);
 	public ExplosionHandler eh = new ExplosionHandler(this);
 	public Enemy enemy[] = new Enemy[20];
-
+	public Queue<Bomb> bomb = new LinkedList<Bomb>();
 
 	public GamePanel(String str) {	
 		this.setPreferredSize(new Dimension(screenWidth,screenHeight));
@@ -69,6 +72,7 @@ public class GamePanel extends JPanel implements Runnable {
 				enemy[i].update();
 			}
 		}
+		updateAllBomb();
 	}
 
 	public void paintComponent(Graphics g) {
@@ -76,6 +80,9 @@ public class GamePanel extends JPanel implements Runnable {
 		Graphics2D g2 = (Graphics2D)g;
 
 		tileM.draw(g2);
+		for(Bomb x : bomb) {
+			x.draw(g2);
+		}
 		for(int i=0;i<enemy.length;i++)
 		{
 			if(enemy[i]!=null)
@@ -118,6 +125,17 @@ public class GamePanel extends JPanel implements Runnable {
 			}
 		}
 		return true;
+	}
+	
+	public void updateAllBomb() {
+		for(Bomb x : bomb) {
+			x.update();
+		}
+		if(bomb.size()>0) {
+			if(bomb.peek().end==true) {
+				bomb.poll();
+			}
+		}
 	}
 
 	public void gameFinished(Graphics2D g2, String text) {
