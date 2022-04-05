@@ -1,4 +1,4 @@
-package game;
+package entity;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
+
+import game.GamePanel;
 
 public class Enemy extends Entity {
 
@@ -18,16 +20,16 @@ public class Enemy extends Entity {
 		this.x= x;
 		this.y = y;
 		this.gp = gp;
-		area = new Rectangle();
-		area.x = 1;
-		area.y = 18;
-		area.width = 45;
-		area.height = 28;
 		setDefaultValues();
 		getEnemyImage();
 
 	}
 	public void setDefaultValues() {
+		area = new Rectangle();
+		area.x = 1;
+		area.y = 18;
+		area.width = 45;
+		area.height = 28;
 		speed = 2;
 		direction = "down";
 		size = gp.tileSize;

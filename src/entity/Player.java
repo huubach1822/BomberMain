@@ -1,4 +1,4 @@
-package game;
+package entity;
 
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
@@ -8,6 +8,10 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import bomb.Bomb;
+import game.GamePanel;
+import game.KeyHandler;
+
 public class Player extends Entity{
 
 	GamePanel gp;
@@ -15,31 +19,30 @@ public class Player extends Entity{
 	public int bombRadius, maxBomb;
 	boolean delay = false;
 	int delayCounter = 0;
-	int score = 0;
 	
 	public Player(GamePanel gp, KeyHandler keyH) {
 		this.gp = gp;
 		this.keyH = keyH;	
-		area = new Rectangle();
-		area.x = 10;
-		area.y = 17;
-		area.width = 27;
-		area.height = 28;
 		setDefaultValues();
 		getPlayerImage();
 	}
 
 	public void setDefaultValues() {
+		area = new Rectangle();
+		area.x = 10;
+		area.y = 17;
+		area.width = 27;
+		area.height = 28;
+		areaDefaultX = area.x;
+		areaDefaultY = area.y;
 		x = 3*gp.tileSize;
 		y = 3*gp.tileSize;
 		speed = 4;
 		direction = "down";
 		size = gp.tileSize;
 		life = 3;
-		areaDefaultX = area.x;
-		areaDefaultY = area.y;
-		bombRadius = 2;
-		maxBomb = 2;
+		bombRadius = 1;
+		maxBomb = 1;
 	}
 
 	public void getPlayerImage() {
@@ -130,7 +133,7 @@ public class Player extends Entity{
 
 	public void PlantBomb() {
 
-		if(keyH.spacePressed == true && delay == false && gp.bomb.size()<=maxBomb) {
+		if(keyH.spacePressed == true && delay == false && gp.bomb.size()<maxBomb) {
 			int colIndex = (gp.player.x + gp.player.size/2)/gp.tileSize;
 			int rowIndex = (gp.player.y + gp.player.size/2)/gp.tileSize;
 			if(doesBombExist(colIndex,rowIndex)) {

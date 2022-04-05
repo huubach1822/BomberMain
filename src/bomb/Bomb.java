@@ -1,18 +1,27 @@
-package game;
+package bomb;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
+
+import game.GamePanel;
+import powerUp.BombPU;
+import powerUp.CoinPU;
+import powerUp.HeartPU;
+import powerUp.RadiusPU;
+import powerUp.SpeedPU;
 
 
 public class Bomb {
 
 	GamePanel gp;
-	int colIndex, rowIndex;
+	public int colIndex;
+	public int rowIndex;
 	BufferedImage boom, explosion;	
-	int timeToExplosion = 100, explosionCounter = 50;
+	int timeToExplosion = 110, explosionCounter = 50;
 	public int limitUp, limitDown, limitLeft, limitRight;
 	public boolean end = false;
 
@@ -78,7 +87,8 @@ public class Bomb {
 		if( gp.tileM.tile[tileNum].breakable == true) {
 			g2.drawImage(explosion, col*gp.tileSize, row*gp.tileSize, gp.tileSize, gp.tileSize, null);
 			gp.tileM.mapTileNum[row][col] = 0;
-			gp.player.score+=5;
+			gp.score+=5;
+			newPU(col,row);
 		}
 	}
 
@@ -114,6 +124,26 @@ public class Bomb {
 				limitRight = i-1;
 				break;
 			}
+		}
+	}
+	
+	public void newPU(int col, int row) {
+		Random random = new Random();
+		int i = random.nextInt(5)+1;
+		if(i == 1) {
+			gp.powerUp.add(new RadiusPU(gp,col,row));
+		}
+		if(i == 2) {
+			gp.powerUp.add(new SpeedPU(gp,col,row));
+		}
+		if(i == 3) {
+			gp.powerUp.add(new BombPU(gp,col,row));
+		}
+		if(i == 4) {
+			gp.powerUp.add(new HeartPU(gp,col,row));
+		}
+		if(i == 5) {
+			gp.powerUp.add(new CoinPU(gp,col,row));
 		}
 	}
 }

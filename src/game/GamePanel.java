@@ -5,10 +5,19 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 import javax.swing.JPanel;
+
+import bomb.Bomb;
+import bomb.ExplosionHandler;
+import entity.Enemy;
+import entity.Player;
+import powerUp.PowerUp;
+import tile.TileManager;
 
 public class GamePanel extends JPanel implements Runnable {
 
@@ -19,6 +28,7 @@ public class GamePanel extends JPanel implements Runnable {
 	public final int screenWidth = tileSize * maxScreenCol;	//768
 	public final int screenHeight = tileSize * maxScreenRow;	//576
 	public String playerName; 
+	public int score = 0;
 
 	public KeyHandler keyH = new KeyHandler();
 	public Thread gameThread;
@@ -29,6 +39,7 @@ public class GamePanel extends JPanel implements Runnable {
 	public ExplosionHandler eh = new ExplosionHandler(this);
 	public Enemy enemy[] = new Enemy[20];
 	public Queue<Bomb> bomb = new LinkedList<Bomb>();
+	public List<PowerUp> powerUp = new ArrayList<PowerUp>();
 
 	public GamePanel(String str) {	
 		this.setPreferredSize(new Dimension(screenWidth,screenHeight));
@@ -73,6 +84,7 @@ public class GamePanel extends JPanel implements Runnable {
 			}
 		}
 		updateAllBomb();
+		updateAllPU();
 	}
 
 	public void paintComponent(Graphics g) {
@@ -80,6 +92,9 @@ public class GamePanel extends JPanel implements Runnable {
 		Graphics2D g2 = (Graphics2D)g;
 
 		tileM.draw(g2);
+		for(PowerUp x : powerUp) {
+				x.draw(g2);
+		}
 		for(Bomb x : bomb) {
 			x.draw(g2);
 		}
@@ -126,7 +141,7 @@ public class GamePanel extends JPanel implements Runnable {
 		}
 		return true;
 	}
-	
+
 	public void updateAllBomb() {
 		for(Bomb x : bomb) {
 			x.update();
@@ -138,14 +153,28 @@ public class GamePanel extends JPanel implements Runnable {
 		}
 	}
 
+	public void updateAllPU() {
+		List<PowerUp> toRemove = new ArrayList<>();
+		for(PowerUp x : powerUp) {
+			x.update();
+			if (x.pickedUp) {
+				toRemove.add(x);
+			}
+		}
+		powerUp.removeAll(toRemove);
+	}
+
 	public void gameFinished(Graphics2D g2, String text) {
 
-		g2.setFont(new Font("Arial", Font.PLAIN, 60));
-		g2.setColor(Color.WHITE);
 		int textLength;
 		int x;
 		int y;
 
+		g2.setColor(new Color(0.0f, 0.0f, 0.0f, 0.5f));
+		g2.fillRect(0, 0, screenWidth, screenHeight);
+
+		g2.setFont(new Font("Arial", Font.PLAIN, 60));
+		g2.setColor(Color.WHITE);
 		textLength = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
 		x = screenWidth/2 - textLength/2;
 		y = screenHeight/5;
@@ -161,7 +190,7 @@ public class GamePanel extends JPanel implements Runnable {
 			g2.drawString(text, x, y);
 		}
 
-		text = "Your score: " + player.score;
+		text = "Your score: " + score;
 		textLength = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
 		x = screenWidth/2 - textLength/2;
 		y += tileSize;

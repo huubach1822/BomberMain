@@ -32,7 +32,7 @@ public class HeartAndScore {
 		}		
 		g2.setFont(new Font("Arial", Font.PLAIN, 35));
 		g2.setColor(Color.WHITE);
-		g2.drawString("Score: " + gp.player.score, gp.tileSize*13, gp.tileSize*5/6);
+		g2.drawString("Score: " + gp.score, gp.tileSize*13, gp.tileSize*5/6);
 	}
 
 }

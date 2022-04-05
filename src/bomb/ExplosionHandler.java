@@ -1,22 +1,23 @@
-package game;
+package bomb;
 
 import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.List;
+
+import entity.Entity;
+import game.GamePanel;
+import powerUp.PowerUp;
 
 public class ExplosionHandler {
 
 	GamePanel gp;
 	Rectangle eh;
-	int RectDefaultX, RectDefaultY;
 
 	public ExplosionHandler(GamePanel gp) {
 		this.gp = gp;
 		eh = new Rectangle();
-		eh.x = 0;
-		eh.y = 0;
 		eh.width = gp.tileSize;
 		eh.height = gp.tileSize;
-		RectDefaultX = eh.x;
-		RectDefaultY = eh.y;
 	}
 
 	public void checkEvent(int eventCol, int eventRow) {
@@ -31,7 +32,7 @@ public class ExplosionHandler {
 			{
 				if( hit(eventCol,eventRow, gp.enemy[i]) == true) {
 					gp.enemy[i] = null;
-					gp.player.score +=25;
+					gp.score +=25;
 				}
 			}
 		}
@@ -40,21 +41,26 @@ public class ExplosionHandler {
 				x.timeToExplosion = 0;
 			}
 		}
+		List<PowerUp> toRemove = new ArrayList<>();
+		for(PowerUp x : gp.powerUp) {
+			if (x.colIndex == eventCol && x.rowIndex == eventRow && x.invincibleTime == 0) {
+				toRemove.add(x);
+			}
+		}
+		gp.powerUp.removeAll(toRemove);
 	}
 
 	public boolean hit(int eventCol, int eventRow,Entity target) {
 		boolean hit = false;
 		target.area.x = target.x + target.area.x;
 		target.area.y = target.y + target.area.y;
-		eh.x = eventCol*gp.tileSize + eh.x;
-		eh.y = eventRow*gp.tileSize + eh.y;
+		eh.x = eventCol*gp.tileSize;
+		eh.y = eventRow*gp.tileSize;
 		if(target.area.intersects(eh)) {
 			hit = true;
 		}
 		target.area.x = target.areaDefaultX;
 		target.area.y = target.areaDefaultY;
-		eh.x = RectDefaultX;
-		eh.y = RectDefaultY;
 		return hit;
 	}
 
