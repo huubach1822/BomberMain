@@ -9,7 +9,7 @@ public class Main {
 	public static void main(String[] args) {
 
 		JFrame window = new JFrame();
-		String str;
+		String str = null;
 		ImageIcon icon = new ImageIcon("boom_icon.png");
 		
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -17,7 +17,7 @@ public class Main {
 		window.setTitle("BoomGame");
 		window.setIconImage(icon.getImage());
 		
-		str = (String) JOptionPane.showInputDialog(window,"Enter Your Name","Start Game!",JOptionPane.INFORMATION_MESSAGE,icon,null,"");
+//		str = (String) JOptionPane.showInputDialog(window,"Enter Your Name","Start Game!",JOptionPane.INFORMATION_MESSAGE,icon,null,"");
 		
 		GamePanel gamePanel = new GamePanel(str);
 		window.add(gamePanel);

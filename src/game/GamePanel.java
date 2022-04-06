@@ -5,11 +5,14 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 import bomb.Bomb;
@@ -29,6 +32,7 @@ public class GamePanel extends JPanel implements Runnable {
 	public final int screenHeight = tileSize * maxScreenRow;	//576
 	public String playerName; 
 	public int score = 0;
+	public BufferedImage win, lose;
 
 	public KeyHandler keyH = new KeyHandler();
 	public Thread gameThread;
@@ -52,6 +56,14 @@ public class GamePanel extends JPanel implements Runnable {
 			playerName = str;
 		}
 		setUpEnemy();
+		try {
+			win = ImageIO.read(getClass().getResourceAsStream("/game/win.png"));
+			lose = ImageIO.read(getClass().getResourceAsStream("/game/game_over.png"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	public void startGameThread() {
@@ -93,7 +105,7 @@ public class GamePanel extends JPanel implements Runnable {
 
 		tileM.draw(g2);
 		for(PowerUp x : powerUp) {
-				x.draw(g2);
+			x.draw(g2);
 		}
 		for(Bomb x : bomb) {
 			x.draw(g2);
@@ -167,28 +179,25 @@ public class GamePanel extends JPanel implements Runnable {
 	public void gameFinished(Graphics2D g2, String text) {
 
 		int textLength;
-		int x;
-		int y;
+		int x, y;
 
 		g2.setColor(new Color(0.0f, 0.0f, 0.0f, 0.5f));
 		g2.fillRect(0, 0, screenWidth, screenHeight);
 
-		g2.setFont(new Font("Arial", Font.PLAIN, 60));
-		g2.setColor(Color.WHITE);
-		textLength = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
-		x = screenWidth/2 - textLength/2;
-		y = screenHeight/5;
-		g2.drawString(text, x, y);
+		if(text == "VICTORY") {
+			g2.drawImage(win, 212, 48, screenWidth/2, screenHeight/7, null);
+		} else {
+			g2.drawImage(lose, 205, 48, screenWidth/2, screenHeight/7, null);
+		}
 
 		g2.setFont(new Font("Arial", Font.PLAIN, 40));
+		g2.setColor(Color.WHITE);
 
-		if(playerName !=null) {
-			text = "Name: " + playerName;
-			textLength = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
-			x = screenWidth/2 - textLength/2;
-			y += tileSize;
-			g2.drawString(text, x, y);
-		}
+		text = "Name: " + playerName;
+		textLength = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
+		x = screenWidth/2 - textLength/2;
+		y = screenHeight/5 + tileSize*2;
+		g2.drawString(text, x, y);
 
 		text = "Your score: " + score;
 		textLength = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
