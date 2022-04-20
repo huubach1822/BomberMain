@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Queue;
 
 import javax.imageio.ImageIO;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import bomb.Bomb;
@@ -33,8 +35,11 @@ public class GamePanel extends JPanel implements Runnable {
 	public String playerName; 
 	public int score = 0;
 	public BufferedImage win, lose;
+	public boolean gamePause = false;
+	public JButton btnResetButton = null;
+	public DataBase db = null;
 
-	public KeyHandler keyH = new KeyHandler();
+	public KeyHandler keyH = new KeyHandler(this);
 	public Thread gameThread;
 	public Player player = new Player(this,keyH);
 	public TileManager tileM = new TileManager(this);
@@ -45,13 +50,13 @@ public class GamePanel extends JPanel implements Runnable {
 	public Queue<Bomb> bomb = new LinkedList<Bomb>();
 	public List<PowerUp> powerUp = new ArrayList<PowerUp>();
 
-	public GamePanel(String str) {	
+	public GamePanel(String str,JButton btnReset,DataBase db) {	
 		this.setPreferredSize(new Dimension(screenWidth,screenHeight));
 		this.setBackground(Color.black);
 		this.addKeyListener(keyH);
 		this.setFocusable(true);
 		if(str==null||str.length()==0) {
-			playerName = "Unknown";
+			playerName = "unknown";
 		} else {
 			playerName = str;
 		}
@@ -63,7 +68,8 @@ public class GamePanel extends JPanel implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		this.btnResetButton = btnReset;
+		this.db = db;
 	}
 
 	public void startGameThread() {
@@ -87,22 +93,27 @@ public class GamePanel extends JPanel implements Runnable {
 	}
 
 	public void update() {
-		player.update();
-		for(int i=0;i<enemy.length;i++)
-		{
-			if(enemy[i]!= null)
+		if(gamePause == false) {
+			player.update();
+			for(int i=0;i<enemy.length;i++)
 			{
-				enemy[i].update();
+				if(enemy[i]!= null)
+				{
+					enemy[i].update();
+				}
 			}
+			updateAllBomb();
+			updateAllPU();
 		}
-		updateAllBomb();
-		updateAllPU();
+		else {
+			//nothing
+		}
 	}
 
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D)g;
-
+		
 		tileM.draw(g2);
 		for(PowerUp x : powerUp) {
 			x.draw(g2);
@@ -119,16 +130,17 @@ public class GamePanel extends JPanel implements Runnable {
 		}
 		player.draw(g2);
 		heart.draw(g2);
+		checkGameState(g2);
 
 		if(player.life == 0) {
-			gameFinished(g2,"GAME OVER");
 			gameThread = null;
+			gameFinished(g2,lose);
 		}
 		else if(checkEnemy()) {
-			gameFinished(g2,"VICTORY");
 			gameThread = null;
+			gameFinished(g2,win);
 		}
-
+		
 		g2.dispose();
 	}
 
@@ -143,15 +155,6 @@ public class GamePanel extends JPanel implements Runnable {
 		enemy[7] = new Enemy(this, 4*tileSize, 12*tileSize);
 		enemy[8] = new Enemy(this, 14*tileSize, 4*tileSize);
 		enemy[9] = new Enemy(this, 2*tileSize, 10*tileSize);
-	}
-
-	public boolean checkEnemy() {
-		for(int i =0 ;i < enemy.length; i++) {
-			if(enemy[i] != null) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	public void updateAllBomb() {
@@ -176,19 +179,50 @@ public class GamePanel extends JPanel implements Runnable {
 		powerUp.removeAll(toRemove);
 	}
 
-	public void gameFinished(Graphics2D g2, String text) {
+	public void checkGameState(Graphics2D g2) {
+		if(gamePause == true) {
+			String text;
+			int textLength;
+			int x, y;
 
+			g2.setColor(new Color(0.0f, 0.0f, 0.0f, 0.5f));
+			g2.fillRect(0, 0, screenWidth, screenHeight);
+			g2.setFont(new Font("Arial", Font.PLAIN, 80));
+			g2.setColor(Color.WHITE);
+
+			text = "PAUSED";
+			textLength = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
+			x = screenWidth/2 - textLength/2;
+			y = screenHeight/5 + tileSize*2;
+			g2.drawString(text, x, y);
+
+			g2.setFont(new Font("Arial", Font.PLAIN, 40));
+			text = "Press <ESC> to Contiune";
+			textLength = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
+			x = screenWidth/2 - textLength/2;
+			y += tileSize*2;
+			g2.drawString(text, x, y);
+		}
+	}
+	
+	public boolean checkEnemy() {
+		for(int i =0 ;i < enemy.length; i++) {
+			if(enemy[i] != null) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public void gameFinished(Graphics2D g2, BufferedImage img) {
+		String text = null;
 		int textLength;
 		int x, y;
 
 		g2.setColor(new Color(0.0f, 0.0f, 0.0f, 0.5f));
 		g2.fillRect(0, 0, screenWidth, screenHeight);
+		g2.drawImage(img, 208, screenHeight/7, screenWidth/2, screenHeight/7, null);
 
-		if(text == "VICTORY") {
-			g2.drawImage(win, 212, 48, screenWidth/2, screenHeight/7, null);
-		} else {
-			g2.drawImage(lose, 205, 48, screenWidth/2, screenHeight/7, null);
-		}
 
 		g2.setFont(new Font("Arial", Font.PLAIN, 40));
 		g2.setColor(Color.WHITE);
@@ -196,7 +230,7 @@ public class GamePanel extends JPanel implements Runnable {
 		text = "Name: " + playerName;
 		textLength = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
 		x = screenWidth/2 - textLength/2;
-		y = screenHeight/5 + tileSize*2;
+		y = screenHeight/4 + tileSize*2;
 		g2.drawString(text, x, y);
 
 		text = "Your score: " + score;
@@ -204,12 +238,14 @@ public class GamePanel extends JPanel implements Runnable {
 		x = screenWidth/2 - textLength/2;
 		y += tileSize;
 		g2.drawString(text, x, y);
-
-		text = "High scores";
-		textLength = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
-		x = screenWidth/2 - textLength/2;
-		y += 2*tileSize;
-		g2.drawString(text, x, y);
+		
+		db.updateData(playerName, score);
+		
+		btnResetButton.setBounds(320, y + tileSize, 160, 60);
+		btnResetButton.setVisible(true);
+		this.add(btnResetButton);
+		btnResetButton.requestFocusInWindow();
+		
 	}
 
 }

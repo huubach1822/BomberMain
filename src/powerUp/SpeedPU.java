@@ -20,7 +20,7 @@ public class SpeedPU extends PowerUp{
 
 	@Override
 	public void power() {
-		if(gp.player.speed<=8) gp.player.speed+=2;
+		if(gp.player.speed<=7) gp.player.speed+=1;
 	}
 
 }

@@ -129,20 +129,20 @@ public class Bomb {
 	
 	public void newPU(int col, int row) {
 		Random random = new Random();
-		int i = random.nextInt(5)+1;
-		if(i == 1) {
+		int i = random.nextInt(11)+1;
+		if(i == 2) {
 			gp.powerUp.add(new RadiusPU(gp,col,row));
 		}
-		if(i == 2) {
+		if(i == 4) {
 			gp.powerUp.add(new SpeedPU(gp,col,row));
 		}
-		if(i == 3) {
+		if(i == 6) {
 			gp.powerUp.add(new BombPU(gp,col,row));
 		}
-		if(i == 4) {
+		if(i == 8) {
 			gp.powerUp.add(new HeartPU(gp,col,row));
 		}
-		if(i == 5) {
+		if(i == 10) {
 			gp.powerUp.add(new CoinPU(gp,col,row));
 		}
 	}
