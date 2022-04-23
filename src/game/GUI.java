@@ -39,18 +39,35 @@ public class GUI extends JFrame implements MouseListener {
 
 	TextField textField = null;	
 	JButton btnNewButton = null, btnNewButton_1 = null, btnResetButton = null;
-	ImageIcon icon = new ImageIcon("boom_icon.png");
+	ImageIcon icon = null;
 	GamePanel gamePanel = null;
 	DataBase db = new DataBase();
-	JFrame scoreJFrame = new JFrame();
+	JFrame scoreJFrame = null;
+	JLabel lblNewLabel = null;
+	JPanel panel = null;
+	JLabel lblNewLabel_1 = null;
+	JPanel scoreJPanel = null;
+	JTable playerTable = null;
 
 	public GUI() {
+		try {
+			icon = new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/game/boom_icon.png")));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		newGUI();
+	}
+	
+	public void newGUI() {
 		setTitle("Boom Game");
 		setIconImage(icon.getImage());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 786, 608);
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));
 		
+		scoreJFrame = new JFrame();
 		scoreJFrame.setVisible(false);
 		scoreJFrame.setSize(300, 378);
 		scoreJFrame.setIconImage(icon.getImage());
@@ -58,11 +75,11 @@ public class GUI extends JFrame implements MouseListener {
 		scoreJFrame.setLocationRelativeTo(null);
 		scoreJFrame.setResizable(false);
 		
-		JPanel panel = new JPanel();
+		panel = new JPanel();
 		getContentPane().add(panel);
 		panel.setLayout(null);
 
-		JLabel lblNewLabel = new JLabel("Insert name:");
+		lblNewLabel = new JLabel("Insert name:");
 		lblNewLabel.setVerticalAlignment(SwingConstants.TOP);
 		lblNewLabel.setForeground(Color.YELLOW);
 		lblNewLabel.setBackground(new Color(204, 255, 255));
@@ -97,36 +114,50 @@ public class GUI extends JFrame implements MouseListener {
 		btnResetButton.addMouseListener(this);
 		btnResetButton.setVisible(false);
 
-		JLabel lblNewLabel_1 = new JLabel("");
-		lblNewLabel_1.setIcon(new ImageIcon("boom_background.png"));	
+		lblNewLabel_1 = new JLabel("");
+		try {
+			lblNewLabel_1.setIcon(new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/game/boom_background.png"))));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
 		lblNewLabel_1.setBounds(0, 0, 773, 571);
 		panel.add(lblNewLabel_1);
-
+		
+		this.setLocationRelativeTo(null);
+		
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if(e.getSource().equals(btnNewButton) || e.getSource().equals(btnResetButton)) {
+		if(e.getSource().equals(btnNewButton)) {
 			if(scoreJFrame.isVisible()==true) {
 				scoreJFrame.setVisible(false);
 			}
 			this.getContentPane().removeAll();
 			this.repaint();
-			GamePanel gamePanel = new GamePanel(textField.getText(),btnResetButton,db);
+			gamePanel = new GamePanel(textField.getText(),btnResetButton,db);
 			this.add(gamePanel);
 			this.pack();
 			this.setLocationRelativeTo(null);
 			gamePanel.startGameThread();
+		}	
+		
+		if(e.getSource().equals(btnResetButton)) {
+			this.getContentPane().removeAll();
+			this.repaint();
+			gamePanel = null;
+			newGUI();
 		}
-
+		
 		if(e.getSource().equals(btnNewButton_1)) {
 			if(scoreJFrame.isVisible()==false) {
-				JPanel scoreJPanel = new JPanel();
+				scoreJPanel = new JPanel();
 				scoreJPanel.setLayout(new BorderLayout());
 
 				String[] columns = {"ID", "Name", "Score"};
 				Object[][] data = db.readTable("Select * from player order by Score DESC limit 20");
-				JTable playerTable = new JTable(data, columns);
+				playerTable = new JTable(data, columns);
 				scoreJPanel.add(playerTable.getTableHeader(), BorderLayout.NORTH);
 				scoreJPanel.add(playerTable, BorderLayout.CENTER);
 				scoreJFrame.add(scoreJPanel);

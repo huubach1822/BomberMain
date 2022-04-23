@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,7 +31,7 @@ public class GamePanel extends JPanel implements Runnable {
 	public final int maxScreenRow = 15;
 	public final int screenWidth = tileSize * maxScreenCol;	//768
 	public final int screenHeight = tileSize * maxScreenRow;	//576
-	public String playerName; 
+	public String playerName, gameEnd; 
 	public int score = 0;
 	public BufferedImage win, lose;
 	public boolean gamePause = false;
@@ -88,7 +87,11 @@ public class GamePanel extends JPanel implements Runnable {
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}	
+			}
+			if(gameEnd == "win" || gameEnd == "lose") {
+				db.updateData(playerName, score);
+				gameThread = null;
+			}
 		}
 	}
 
@@ -104,6 +107,12 @@ public class GamePanel extends JPanel implements Runnable {
 			}
 			updateAllBomb();
 			updateAllPU();
+			if(player.life == 0) {
+				gameEnd = "lose";
+			}
+			else if(checkEnemy()) {
+				gameEnd = "win";
+			}
 		}
 		else {
 			//nothing
@@ -113,7 +122,7 @@ public class GamePanel extends JPanel implements Runnable {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D)g;
-		
+
 		tileM.draw(g2);
 		for(PowerUp x : powerUp) {
 			x.draw(g2);
@@ -131,16 +140,8 @@ public class GamePanel extends JPanel implements Runnable {
 		player.draw(g2);
 		heart.draw(g2);
 		checkGameState(g2);
+		gameFinished(g2);
 
-		if(player.life == 0) {
-			gameThread = null;
-			gameFinished(g2,lose);
-		}
-		else if(checkEnemy()) {
-			gameThread = null;
-			gameFinished(g2,win);
-		}
-		
 		g2.dispose();
 	}
 
@@ -204,7 +205,7 @@ public class GamePanel extends JPanel implements Runnable {
 			g2.drawString(text, x, y);
 		}
 	}
-	
+
 	public boolean checkEnemy() {
 		for(int i =0 ;i < enemy.length; i++) {
 			if(enemy[i] != null) {
@@ -213,39 +214,41 @@ public class GamePanel extends JPanel implements Runnable {
 		}
 		return true;
 	}
-	
-	public void gameFinished(Graphics2D g2, BufferedImage img) {
-		String text = null;
-		int textLength;
-		int x, y;
 
-		g2.setColor(new Color(0.0f, 0.0f, 0.0f, 0.5f));
-		g2.fillRect(0, 0, screenWidth, screenHeight);
-		g2.drawImage(img, 208, screenHeight/7, screenWidth/2, screenHeight/7, null);
+	public void gameFinished(Graphics2D g2) {
+		if(gameEnd == "win" || gameEnd == "lose") {
+			String text = null;
+			int textLength, x, y;
 
+			g2.setColor(new Color(0.0f, 0.0f, 0.0f, 0.5f));
+			g2.fillRect(0, 0, screenWidth, screenHeight);
+			
+			if(gameEnd == "win") {
+				g2.drawImage(win, 208, screenHeight/7, screenWidth/2, screenHeight/7, null);
+			} else if(gameEnd == "lose") {
+				g2.drawImage(lose, 208, screenHeight/7, screenWidth/2, screenHeight/7, null);
+			}
 
-		g2.setFont(new Font("Arial", Font.PLAIN, 40));
-		g2.setColor(Color.WHITE);
+			g2.setFont(new Font("Arial", Font.PLAIN, 40));
+			g2.setColor(Color.WHITE);
 
-		text = "Name: " + playerName;
-		textLength = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
-		x = screenWidth/2 - textLength/2;
-		y = screenHeight/4 + tileSize*2;
-		g2.drawString(text, x, y);
+			text = "Name: " + playerName;
+			textLength = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
+			x = screenWidth/2 - textLength/2;
+			y = screenHeight/4 + tileSize*2;
+			g2.drawString(text, x, y);
 
-		text = "Your score: " + score;
-		textLength = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
-		x = screenWidth/2 - textLength/2;
-		y += tileSize;
-		g2.drawString(text, x, y);
-		
-		db.updateData(playerName, score);
-		
-		btnResetButton.setBounds(320, y + tileSize, 160, 60);
-		btnResetButton.setVisible(true);
-		this.add(btnResetButton);
-		btnResetButton.requestFocusInWindow();
-		
+			text = "Your score: " + score;
+			textLength = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
+			x = screenWidth/2 - textLength/2;
+			y += tileSize;
+			g2.drawString(text, x, y);
+
+			btnResetButton.setBounds(320, y + tileSize, 160, 60);
+			btnResetButton.setVisible(true);
+			this.add(btnResetButton);
+			btnResetButton.requestFocusInWindow();
+
+		}
 	}
-
 }

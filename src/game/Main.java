@@ -15,7 +15,6 @@ public class Main {
 				try {
 					GUI frame = new GUI();
 					frame.setResizable(false);
-					frame.setLocationRelativeTo(null);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();

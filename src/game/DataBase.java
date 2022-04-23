@@ -1,5 +1,4 @@
 package game;
-import java.awt.BorderLayout;
 import java.sql.*;
 
 import javax.swing.JPanel;
