@@ -157,7 +157,11 @@ public class GUI extends JFrame implements MouseListener {
 
 				String[] columns = {"ID", "Name", "Score"};
 				Object[][] data = db.readTable("Select * from player order by Score DESC limit 20");
-				playerTable = new JTable(data, columns);
+				playerTable = new JTable(data, columns) {
+					public boolean isCellEditable(int row, int column) {
+				        return false;
+				    }
+				};
 				scoreJPanel.add(playerTable.getTableHeader(), BorderLayout.NORTH);
 				scoreJPanel.add(playerTable, BorderLayout.CENTER);
 				scoreJFrame.add(scoreJPanel);
